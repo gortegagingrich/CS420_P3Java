@@ -2,7 +2,7 @@
  * Created by Gabriel on 2017/03/12.
  */
 public class Game {
-   char[] board;
+   private char[] board;
 
    public Game() {
       board = new char[64];
@@ -17,7 +17,7 @@ public class Game {
    }
 
    public char checkWinner() {
-      int val = evaluateBoard(board, 'O');
+      int val = AI.evaluateBoard(board, 'O');
       char winner;
 
       switch (val) {
@@ -39,7 +39,7 @@ public class Game {
       boolean out = false;
 
       // if chosen move is valid
-      if (board[index] == '-' || board[index] == '+') {
+      if (index >= 0 && index < 64 && (board[index] == '-' || board[index] == '+')) {
          // set square to player's character
          board[index] = player;
          out = true;
@@ -61,78 +61,21 @@ public class Game {
             board[index+8] = '+';
          }
       }
+
       return out;
    }
 
-   public static int evaluateBoard(char[] board, char player) {
-      int out = 0;
-      int i,j,index,streak = 0;
-      char prev;
+   public boolean move(char player, String move) {
+      int index;
 
-      for (i = 0; i < 8; i++) {
-         out += streak;
-         streak = 0;
-         prev = '-';
+      if (move.length() == 2) {
+         index = 8 * (Character.toUpperCase(move.charAt(0)) - 'A');
+         index += move.charAt(1) - '1';
 
-         // horizontal
-         for (j = 0; j < 8; j++) {
-            index = i * 8 + j;
-
-            if (board[index] != '-' && board[index] != '+') {
-               if (prev != board[index]) {
-                  streak = 1;
-                  prev = board[index];
-               } else {
-                  if (prev == player) {
-                     out += streak;
-                  } else {
-                     out -= streak;
-                  }
-
-                  streak += 1;
-
-                  if (streak == 4) {
-                     return (prev == player) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-                  }
-               }
-            } else {
-               streak = 0;
-            }
-         }
+         return (move(player, index));
       }
 
-      // vertical
-      for (j = 0; j < 8; j++) {
-         streak = 0;
-         prev = '-';
-
-         for (i = 0; i < 8; i++) {
-            index = i * 8 + j;
-
-            if (board[index] != '-' && board[index] != '+') {
-               if (prev != board[index]) {
-                  streak = 1;
-                  prev = board[index];
-               } else {
-                  if (prev == player) {
-                     out += streak;
-                  } else {
-                     out -= streak;
-                  }
-
-                  streak += 1;
-
-                  if (streak == 4) {
-                     return (prev == player) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-                  }
-               }
-            } else {
-               streak = 0;
-            }
-         }
-      }
-
-      return out;
+      return false;
    }
 
    public String toString() {
@@ -152,5 +95,9 @@ public class Game {
       }
 
       return out;
+   }
+
+   char[] getBoardInsecure() {
+      return board;
    }
 }
